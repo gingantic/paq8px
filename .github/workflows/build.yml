@@ -18,7 +18,7 @@ jobs:
       
     - name: Install ZLIB
       run: |
-        vcpkg install zlib:x64-windows --triplet=x64-windows --debug
+        vcpkg install zlib:x64-windows
         vcpkg integrate install
       
     - name: Configure CMake
@@ -27,7 +27,8 @@ jobs:
           mkdir build
         }
         cd build
-        cmake .. -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=ON
+        # Override the compiler flags in CMakeLists.txt for Windows
+        cmake .. -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="/O2 /Oi /Ot /Oy /GL" -DCMAKE_VERBOSE_MAKEFILE=ON
       
     - name: Build
       run: |
