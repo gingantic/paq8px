@@ -27,8 +27,8 @@ jobs:
           mkdir build
         }
         cd build
-        # Override the compiler flags in CMakeLists.txt for Windows
-        cmake .. -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="/O2 /Oi /Ot /Oy /GL" -DCMAKE_VERBOSE_MAKEFILE=ON
+        # Add DISABLE_ZLIB option to skip zlib dependency
+        cmake .. -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="/O2 /Oi /Ot /Oy /GL" -DCMAKE_VERBOSE_MAKEFILE=ON -DDISABLE_ZLIB=ON
       
     - name: Build
       run: |
