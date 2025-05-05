@@ -1,0 +1,62 @@
+name: Build paq8px
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+      
+    - name: Setup CMake
+      uses: lukka/get-cmake@latest
+      
+    - name: Install ZLIB
+      run: |
+        vcpkg install zlib:x64-windows
+        vcpkg integrate install
+      
+    - name: Configure CMake
+      run: |
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DCMAKE_BUILD_TYPE=Release
+      
+    - name: Build
+      run: |
+        cd build
+        cmake --build . --config Release
+      
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: paq8px-windows
+        path: build/Release/paq8px.exe
+        if-no-files-found: error
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential zlib1g-dev cmake make
+      
+    - name: Configure and Build
+      run: |
+        mkdir -p build
+        cd build
+        cmake ..
+        make
+      
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: paq8px-linux
+        path: build/paq8px
+        if-no-files-found: error
